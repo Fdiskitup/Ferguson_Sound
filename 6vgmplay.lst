@@ -1,0 +1,263 @@
+# file opened: 6vgmplay.asm
+  1   0000              ; SN76489 + AY-3-8910 VGM player for CP/M
+  2   0000              ;tHIS VERSION MODIFIED YO mATT TO GET IT TO WORK ON THE FERGUSON bIG bOARD
+  3   0000              ;
+  4   0000              ; Based on VGM player by J.B. Langston
+  5   0000              ; https://github.com/jblang/SN76489
+  6   0000              ;
+  7   0000              ; Enhanced with multi-chip support by Marco Maccaferri
+  8   0000              ;
+  9   0000              ; Compile with:
+ 10   0000              ;
+ 11   0000              ;   TASM -80 -b VGMPLAY.ASM VGMPLAY.COM
+ 12   0000
+ 13   0000              P8X180          .EQU    0                   ; System configuration
+ 14   0000              RC2014          .EQU    1
+ 15   0000
+ 16   0000                              .IF P8X180
+ 17   0000 ~            RSEL            .EQU    82H                 ; Primary AY-3-8910 Register selection
+ 18   0000 ~            RDAT            .EQU    83H                 ; Primary AY-3-8910 Register data
+ 19   0000 ~            RSEL2           .EQU    88H                 ; Secondary AY-3-8910 Register selection
+ 20   0000 ~            RDAT2           .EQU    89H                 ; Secondary AY-3-8910 Register data
+ 21   0000 ~            PSGREG          .EQU    84H                 ; Primary SN76489    changfe to 09 register and 11
+ 22   0000 ~            PSG2REG         .EQU    8AH                 ; Seconday SN76489   change to 11 for second SN76489 chip
+ 23   0000 ~            FRAME_DLY       .EQU    48                  ; Frame delay (~ 1/44100)
+ 24   0000                              .ENDIF
+ 25   0000
+ 26   0000                              .IF RC2014                  ; this one may be best to tinker with
+ 27   0000              RSEL            .EQU    0D8H                ; Primary AY-3-8910 Register selection
+ 28   0000              RDAT            .EQU    0D0H                ; Primary AY-3-8910 Register data
+ 29   0000              RSEL2           .EQU    0A0H                ; Seconday AY-3-8910 Register selection
+ 30   0000              RDAT2           .EQU    0A1H                ; Seconday AY-3-8910 Register data
+ 31   0000              PSGREG          .EQU    008H                ; Primary SN76489  ******
+ 32   0000              PSG2REG         .EQU    00AH                ; Seconday SN76489 ******
+ 33   0000              FRAME_DLY       .EQU    6                   ; WAS 15 Frame delay (~ 1/44100) for 7.37 mhz rc2014, 4mhz, 1.8425x= 8 cycles ?
+ 34   0000                              .ENDIF
+ 35   0000
+ 36   0000              BOOT            .EQU    0000H               ; boot location
+ 37   0000              BDOS            .EQU    0005H               ; bdos entry point
+ 38   0000              FCB             .EQU    005CH               ; file control block
+ 39   0000              FCBCR           .EQU    FCB + 20H           ; fcb current record
+ 40   0000              BUFF            .EQU    0080H               ; DMA buffer
+ 41   0000
+ 42   0000              PRINTF          .EQU    9                   ; BDOS print string function
+ 43   0000              OPENF           .EQU    15                  ; BDOS open file function
+ 44   0000              CLOSEF          .EQU    16                  ; BDOS close file function
+ 45   0000              READF           .EQU    20                  ; BDOS sequential read function
+ 46   0000
+ 47   0000              CR              .EQU    0DH                 ; carriage return
+ 48   0000              LF              .EQU    0AH                 ; line feed
+ 49   0000              EOS             .EQU    '$'                 ; end of string marker
+ 50   0000
+ 51   0000                              .ORG    100H                ;put the vgmplayer at 0100hex
+ 52   0100 3E 0F                        LD      A,15
+ 53   0102 D3 09                        OUT     (09),A              ;SET THE PIO TO OUTPUT MODE
+ 54   0104 ED 73 69 02                  LD      (OLDSTACK), SP      ; save old stack pointer
+ 55   0108 31 AB 02                     LD      SP, STACK           ; set new stack pointer
+ 56   010B
+ 57   010B 0E 0F                        LD      C, OPENF
+ 58   010D 11 5C 00                     LD      DE, FCB
+ 59   0110 CD 05 00                     CALL    BDOS
+ 60   0113 3C                           INC     A
+ 61   0114 CA B7 01                     JP      Z, ERR
+ 62   0117
+ 63   0117 AF                           XOR     A
+ 64   0118 32 7C 00                     LD      (FCBCR), A
+ 65   011B 11 AB 02                     LD      DE, VGMDATA
+ 66   011E ED 53 65 02                  LD      (VGMPOS), DE
+ 67   0122 0E 14        RLOOP           LD      C, READF
+ 68   0124 11 5C 00                     LD      DE, FCB
+ 69   0127 CD 05 00                     CALL    BDOS
+ 70   012A B7                           OR      A
+ 71   012B 20 12                        JR      NZ, RDONE
+ 72   012D 21 80 00                     LD      HL, BUFF
+ 73   0130 ED 5B 65 02                  LD      DE, (VGMPOS)
+ 74   0134 01 80 00                     LD      BC, 128
+ 75   0137 ED B0                        LDIR
+ 76   0139 ED 53 65 02                  LD      (VGMPOS), DE
+ 77   013D 18 E3                        JR      RLOOP
+ 78   013F
+ 79   013F 0E 10        RDONE           LD      C, CLOSEF
+ 80   0141 11 5C 00                     LD      DE, FCB
+ 81   0144 CD 05 00                     CALL    BDOS
+ 82   0147
+ 83   0147 2A DF 02                     LD      HL, (VGMDATA + 34H) ; start of VGM
+ 84   014A 7C                           LD      A, H
+ 85   014B B5                           OR      L
+ 86   014C 20 03                        JR      NZ, _S1
+ 87   014E 21 0C 00                     LD      HL, 000CH           ; default location (40H - 34H)
+ 88   0151 11 DF 02     _S1             LD      DE, VGMDATA + 34H
+ 89   0154 19                           ADD     HL, DE
+ 90   0155 22 65 02                     LD      (VGMPOS), HL
+ 91   0158 21 DF 02                     LD      HL, 735             ; VGM delay (60hz)
+ 92   015B 22 67 02                     LD      (VGMDLY), HL
+ 93   015E
+ 94   015E              MAINLOOP
+ 95   015E CD D1 01                     CALL    PLAY                ; play one frame
+ 96   0161
+ 97   0161 0E 06                        LD      C, 6                ; check for keypress
+ 98   0163 1E FF                        LD      E, 0FFH
+ 99   0165 CD 05 00                     CALL    BDOS
+100   0168 B7                           OR      A
+101   0169 20 0E                        JR      NZ, EXIT
+102   016B
+103   016B 2A 67 02                     LD      HL, (VGMDLY)        ; frame delay
+104   016E 06 06        L1              LD      B, FRAME_DLY
+105   0170 10 FE                        DJNZ    $
+106   0172 2B                           DEC     HL
+107   0173 7C                           LD      A, H
+108   0174 B5                           OR      L
+109   0175 20 F7                        JR      NZ, L1
+110   0177
+111   0177 18 E5                        JR      MAINLOOP
+112   0179
+113   0179              EXIT
+114   0179 3E 9F                        LD      A, 9FH              ; mute all channels on psg
+115   017B D3 08                        OUT     (PSGREG), A
+116   017D D3 0A                        OUT     (PSG2REG), A
+117   017F 3E BF                        LD      A, 0BFH
+118   0181 D3 08                        OUT     (PSGREG), A
+119   0183 D3 0A                        OUT     (PSG2REG), A
+120   0185 3E DF                        LD      A, 0DFH
+121   0187 D3 08                        OUT     (PSGREG), A
+122   0189 D3 0A                        OUT     (PSG2REG), A
+123   018B 3E FF                        LD      A, 0FFH
+124   018D D3 08                        OUT     (PSGREG), A
+125   018F D3 0A                        OUT     (PSG2REG), A
+126   0191
+127   0191 3E 08                        LD      A, 8                ; mute all channels on ay
+128   0193 D3 D8                        OUT     (RSEL), A
+129   0195 D3 A0                        OUT     (RSEL2), A
+130   0197 AF                           XOR     A
+131   0198 D3 D0                        OUT     (RDAT), A
+132   019A D3 A1                        OUT     (RDAT2), A
+133   019C 3E 09                        LD      A, 9
+134   019E D3 D8                        OUT     (RSEL), A
+135   01A0 D3 A0                        OUT     (RSEL2), A
+136   01A2 AF                           XOR     A
+137   01A3 D3 D0                        OUT     (RDAT), A
+138   01A5 D3 A1                        OUT     (RDAT2), A
+139   01A7 3E 0A                        LD      A, 10
+140   01A9 D3 D8                        OUT     (RSEL), A
+141   01AB D3 A0                        OUT     (RSEL2), A
+142   01AD AF                           XOR     A
+143   01AE D3 D0                        OUT     (RDAT), A
+144   01B0 D3 A1                        OUT     (RDAT2), A
+145   01B2
+146   01B2 ED 7B 69 02                  LD      SP, (OLDSTACK)
+147   01B6 C7                           RST     00H
+148   01B7
+149   01B7 0E 09        ERR             LD      C, PRINTF
+150   01B9 11 C0 01                     LD      DE, NOFILE
+151   01BC CD 05 00                     CALL    BDOS
+152   01BF C7                           RST     00H
+153   01C0
+154   01C0 46 69 6C 65  NOFILE          .DB    "File not found", CR, LF, EOS
+154   01C4 20 6E 6F 74
+154   01C8 20 66 6F 75
+154   01CC 6E 64 0D 0A
+154   01D0 24
+155   01D1
+156   01D1              ;------------------------------------------------------------------------------
+157   01D1              ; VGM Player.
+158   01D1              ;------------------------------------------------------------------------------
+159   01D1              PLAY
+160   01D1 2A 65 02                     LD      HL, (VGMPOS)        ; Start processing VGM commands
+161   01D4 7E           NEXT            LD      A, (HL)
+162   01D5 23                           INC     HL
+163   01D6 22 65 02                     LD      (VGMPOS), HL
+164   01D9 FE 66                        CP      66H                 ; Restart VGM cmd
+165   01DB 20 11                        JR      NZ, NEXT1
+166   01DD 2A C7 02                     LD      HL, (VGMDATA + 1CH) ; Loop offset
+167   01E0 7C                           LD      A, H
+168   01E1 B5                           OR      L
+169   01E2 CA 79 01                     JP      Z, EXIT
+170   01E5 11 C7 02                     LD      DE, VGMDATA + 1CH
+171   01E8 19                           ADD     HL, DE
+172   01E9 22 65 02                     LD      (VGMPOS), HL
+173   01EC 18 E6                        JR      NEXT
+174   01EE FE 4F        NEXT1           CP      4FH                 ; Game Gear SN76489 stereo. Ignored
+175   01F0 20 03                        JR      NZ, PSG
+176   01F2 23                           INC     HL
+177   01F3 18 DF                        JR      NEXT
+178   01F5 FE 50        PSG             CP      50H                 ; Write byte to SN76489.
+179   01F7 20 06                        JR      NZ, PSG2
+180   01F9 7E                           LD      A, (HL)
+181   01FA 23                           INC     HL
+182   01FB D3 08                        OUT     (PSGREG), A
+183   01FD 18 D5                        JR      NEXT
+184   01FF FE 30        PSG2            CP      30H                 ; Write byte to second SN76489.
+185   0201 20 06                        JR      NZ, AY
+186   0203 7E                           LD      A, (HL)
+187   0204 23                           INC     HL
+188   0205 D3 0A                        OUT     (PSG2REG), A
+189   0207 18 CB                        JR      NEXT
+190   0209 FE A0        AY              CP      0A0H
+191   020B 20 18                        JR      NZ, WAITNN
+192   020D 7E                           LD      A, (HL)
+193   020E 23                           INC     HL
+194   020F CB 7F                        BIT     7, A                ; Bit 7=1 for second AY-3-8910
+195   0211 28 0A                        JR      Z, AY1
+196   0213 E6 7F                        AND     7FH
+197   0215 D3 A0                        OUT     (RSEL2), A
+198   0217 7E                           LD      A, (HL)
+199   0218 23                           INC     HL
+200   0219 D3 A1                        OUT     (RDAT2), A
+201   021B 18 B7                        JR      NEXT
+202   021D D3 D8        AY1             OUT     (RSEL), A
+203   021F 7E                           LD      A, (HL)
+204   0220 23                           INC     HL
+205   0221 D3 D0                        OUT     (RDAT), A
+206   0223 18 AF                        JR      NEXT
+207   0225 FE 61        WAITNN          CP      61H                 ; Wait nn samples
+208   0227 20 0D                        JR      NZ, WAIT60
+209   0229 7E                           LD      A, (HL)
+210   022A 23                           INC     HL
+211   022B 56                           LD      D, (HL)
+212   022C 23                           INC     HL
+213   022D 22 65 02                     LD      (VGMPOS), HL
+214   0230 6F                           LD      L, A
+215   0231 62                           LD      H, D
+216   0232 22 67 02                     LD      (VGMDLY), HL
+217   0235 C9                           RET
+218   0236 FE 62        WAIT60          CP      62H                 ; Wait 735 samples (60Hz)
+219   0238 20 0A                        JR      NZ, WAIT50
+220   023A 22 65 02                     LD      (VGMPOS), HL
+221   023D 21 DF 02                     LD      HL, 735
+222   0240 22 67 02                     LD      (VGMDLY), HL
+223   0243 C9                           RET
+224   0244 FE 63        WAIT50          CP      63H                 ; Wait 882 samples (50Hz)
+225   0246 20 0A                        JR      NZ, WAIT1
+226   0248 22 65 02                     LD      (VGMPOS), HL
+227   024B 21 72 03                     LD      HL, 882
+228   024E 22 67 02                     LD      (VGMDLY), HL
+229   0251 C9                           RET
+230   0252 FE 70        WAIT1           CP      70H
+231   0254 DA D4 01                     JP      C, NEXT
+232   0257 FE 80                        CP      80H
+233   0259 D2 D4 01                     JP      NC, NEXT
+234   025C D6 6F                        SUB     6FH
+235   025E 6F                           LD      L, A
+236   025F 26 00                        LD      H, 0
+237   0261 22 67 02                     LD      (VGMDLY), HL
+238   0264 C9                           RET
+239   0265
+240   0265              ;------------------------------------------------------------------------------
+241   0265              ; Variables
+242   0265              ;------------------------------------------------------------------------------
+243   0265
+244   0265 00 00        VGMPOS          .DW     0
+245   0267 00 00        VGMDLY          .DW     0
+246   0269
+247   0269 00 00        OLDSTACK        .DW     0                   ; original stack pointer
+248   026B 00 00 00...                  .DS     40H                 ; space for stack
+249   02AB              STACK                                       ; top of stack
+250   02AB
+251   02AB              ;------------------------------------------------------------------------------
+252   02AB              ; VGM data
+253   02AB              ;------------------------------------------------------------------------------
+254   02AB
+255   02AB              VGMDATA
+256   02AB
+257   02AB                              .END
+# file closed: 6vgmplay.asm
