@@ -1,5 +1,6 @@
 # Ferguson_Sound
-A soundcard for the Ferguson Big Board based on the 76489 PSG.   
+A soundcard for the Ferguson Big Board based on the SN76489 PSG sound chip.   
+![SN76489AN_soundboard1](https://github.com/user-attachments/assets/5053c796-8be4-4c9b-b8f4-1175f97176e0)
 
 The parallel port on the Ferguson Big Board uses the Z80 PIO to give 2 x 8bit bidirectional user ports.  
 This soundcard was created to make use of port A. 
