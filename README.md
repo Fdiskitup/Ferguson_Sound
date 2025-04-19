@@ -9,5 +9,8 @@ The board itself is rather simple consisting of 3 parts.
 2, The amplifier based on he classic LM386 op amp chip. 
 3, The VU meter using LM3915N-1 to pulse the LED's in tune to the music.  
 
-This is derived from several sources https://github.com/bchiha/Ready-Z80/tree/main/16-SN76489_Sound_Generator 
+This is derived from several sources 
+https://github.com/bchiha/Ready-Z80/tree/main/16-SN76489_Sound_Generator 
+https://github.com/jblang/SN76489
+https://github.com/abaffa/z80cpm_emulator
 
