@@ -1,0 +1,4 @@
+I ordered from Digikey.
+The SN76489 PSG chips are availble on Ali Express - I got 10 parts an 9/10 worked fine - they all have slight sound differences.  I tested in an RC2014 board, then a breadboard off the Ferguson Big Board. 
+The LM3915N-1 chips were an EBay purchase user "survy2014"
+The 4 MHz crystals were ali express parts.     
