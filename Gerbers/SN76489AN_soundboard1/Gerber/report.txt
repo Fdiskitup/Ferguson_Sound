@@ -1,0 +1,11 @@
+Plotted to 'C:\Users\spenc\OneDrive\Documents\KiCad\9.0\projects\SN76489AN-1\SN76489AN_soundboard1\Gerber\SN76489AN_soundboard1-F_Cu.gbr'.
+Plotted to 'C:\Users\spenc\OneDrive\Documents\KiCad\9.0\projects\SN76489AN-1\SN76489AN_soundboard1\Gerber\SN76489AN_soundboard1-B_Cu.gbr'.
+Plotted to 'C:\Users\spenc\OneDrive\Documents\KiCad\9.0\projects\SN76489AN-1\SN76489AN_soundboard1\Gerber\SN76489AN_soundboard1-F_Paste.gbr'.
+Plotted to 'C:\Users\spenc\OneDrive\Documents\KiCad\9.0\projects\SN76489AN-1\SN76489AN_soundboard1\Gerber\SN76489AN_soundboard1-B_Paste.gbr'.
+Plotted to 'C:\Users\spenc\OneDrive\Documents\KiCad\9.0\projects\SN76489AN-1\SN76489AN_soundboard1\Gerber\SN76489AN_soundboard1-F_Silkscreen.gbr'.
+Plotted to 'C:\Users\spenc\OneDrive\Documents\KiCad\9.0\projects\SN76489AN-1\SN76489AN_soundboard1\Gerber\SN76489AN_soundboard1-B_Silkscreen.gbr'.
+Plotted to 'C:\Users\spenc\OneDrive\Documents\KiCad\9.0\projects\SN76489AN-1\SN76489AN_soundboard1\Gerber\SN76489AN_soundboard1-F_Mask.gbr'.
+Plotted to 'C:\Users\spenc\OneDrive\Documents\KiCad\9.0\projects\SN76489AN-1\SN76489AN_soundboard1\Gerber\SN76489AN_soundboard1-B_Mask.gbr'.
+Plotted to 'C:\Users\spenc\OneDrive\Documents\KiCad\9.0\projects\SN76489AN-1\SN76489AN_soundboard1\Gerber\SN76489AN_soundboard1-Edge_Cuts.gbr'.
+Created Gerber job file 'C:\Users\spenc\OneDrive\Documents\KiCad\9.0\projects\SN76489AN-1\SN76489AN_soundboard1\Gerber\SN76489AN_soundboard1-job.gbrjob'.
+Info: Done.
