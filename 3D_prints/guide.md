@@ -6,6 +6,8 @@ The GCode is for my "CREALITY ENDER 3 PRO MAX" printer - recomend you slice it y
 <img width="319" alt="LED_Guide_slice" src="https://github.com/user-attachments/assets/a5990857-b623-4aa8-9ba4-7c5e031d6c12" />
 
 
-and heres the pot knob 
+and heres the pot knob "pot Knob.STL" 
+https://www.thingiverse.com/thing:1419579
+
 
 ![b5d5081061c923004a01fd6a3e6d637a](https://github.com/user-attachments/assets/12b0a73f-b104-452c-87af-123431d2d2c8)
