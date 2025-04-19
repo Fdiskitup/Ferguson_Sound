@@ -6,6 +6,7 @@ The parallel port on the Ferguson Big Board uses the Z80 PIO to give 2 x 8bit bi
 This soundcard was created to make use of port A. 
 
 The board itself is rather simple consisting of 3 parts. 
+
 1, The programmable sound generator chip (PSG) SN76489 and clock crystal oscillator. 
 2, The amplifier based on he classic LM386 op amp chip. 
 3, The VU meter using LM3915N-1 to pulse the LED's in tune to the music.  
