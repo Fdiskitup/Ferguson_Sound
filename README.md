@@ -21,7 +21,7 @@ https://github.com/abaffa/z80cpm_emulator
 So you've built the card: 
 
 make sure you set the jumpers pins 7-8, 9-10, 11-12, 13-14, 15-16 all on.  This sets the port for output only.
-see the single blue jumper and the 4 red jumpers 
+see the single blue jumper and the 4 red jumpers.  
 ![FS-1](https://github.com/user-attachments/assets/c3136a83-06ee-40ab-99eb-81af4cd1815d)
 
-
+You'll need to give the board +5V, I just brought a cable from the main board power block to the soundcard power block.  The ground plane is connected to the 10 groung pins of the connector so you could just wire in a single 5V from the rails directly below the power connector.  
