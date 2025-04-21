@@ -33,3 +33,10 @@ JP3 = selects to use internal audio for the VU meter, or external input for the 
 
 I have tried with the 4MHZ full size dip 16 crystal oscillator, but I put in the footprint for the smaller oscillator package.  it should accomodate other frequencies 3.57mhz etc.  or you can steal a clock signal from the Z80-PIO pin 25 (Bandit !). 
 similarly you can just jumper the power switch so its always on - you can always turn it down with the pot.       
+
+So once it is built and jumpered, switch on and you should be treated to some excellent feedback.  
+quickly boot into CPM and run the M.COM file to mute the noise, phew. 
+
+The port resides at 08 and 09 hex 
+
+
