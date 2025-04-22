@@ -18,6 +18,10 @@ https://github.com/jblang/SN76489
 
 https://github.com/abaffa/z80cpm_emulator
 
+![Ferguson Sound FRONT](https://github.com/user-attachments/assets/09cd5240-40b9-423a-947e-0404da7a5da0)
+
+
+
 So you've built the card: 
 
 Make sure you set the jumpers pins 7-8, 9-10, 11-12, 13-14, 15-16 all on.  This sets the port for output only.
