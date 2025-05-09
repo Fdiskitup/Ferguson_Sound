@@ -24,7 +24,7 @@ https://github.com/abaffa/z80cpm_emulator
 
 So you've built the card: 
 
-Make sure you set the jumpers pins 7-8, 9-10, 11-12, 13-14, 15-16 all on.  This sets the port for output only.
+On the Big Board make sure you set the jumpers pins 7-8, 9-10, 11-12, 13-14, 15-16 all on.  This sets the port for output only.
 see the single blue jumper and the 4 red jumpers.  
 ![FS-1](https://github.com/user-attachments/assets/c3136a83-06ee-40ab-99eb-81af4cd1815d)
 
