@@ -18,6 +18,14 @@ https://github.com/jblang/SN76489
 
 https://github.com/abaffa/z80cpm_emulator
 
+What Does it do ? 
+well it can output 3 channels of tones simultaneously, like a cord.  plus it can output a 4th noise channel for explosions gunshots etc. 
+you can program it from basic, assembly, pascal, C etc.  
+remember you will need to set up the PIO Port to be unidirectional - i.e. data output before trying to send data to the PSG.  
+Included here are some basic files to get you started making noises.  
+More importantly there is a program here M.COM that will mute the sound chip, because when it first turns on it tends to emit a random tone.  You'll want to stop this.
+
+
 ![Ferguson Sound FRONT](https://github.com/user-attachments/assets/09cd5240-40b9-423a-947e-0404da7a5da0)
 
 
